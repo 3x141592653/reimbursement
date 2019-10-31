@@ -17,6 +17,8 @@ import java.nio.channels.FileChannel;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -68,6 +70,9 @@ public class App implements Callable<Void> {
 
     // 识别文件夹下的图片
     ArrayList<Takeout> takeoutList = new ArrayList<>();
+    // 订单 Key 集合，用于排除重复的订单
+    Set<String> takeoutKeySet = new HashSet<>();
+
     for (File file : files) {
       // 只处理图片
       try {
@@ -87,6 +92,15 @@ public class App implements Callable<Void> {
       } catch (RecognitionException e) {
         Printer.error(file, e);
         continue;
+      }
+
+      // 是否已有重复的外卖
+      String takeoutKey = takeout.getAppName() + takeout.getTakeoutId();
+      if (takeoutKeySet.contains(takeoutKey)) {
+        Printer.warn(file, new Exception("重复的外卖订单，忽略不处理"));
+        continue;
+      } else {
+        takeoutKeySet.add(takeoutKey);
       }
 
       // 检查外卖是否符合报销要求

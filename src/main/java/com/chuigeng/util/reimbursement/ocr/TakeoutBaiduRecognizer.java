@@ -53,7 +53,7 @@ public class TakeoutBaiduRecognizer implements TakeoutRecognizer {
     }
 
     boolean finished;
-    if (matcher.group(1).equals("已完成")) {
+    if (matcher.group(1) != null && matcher.group(1).equals("已完成")) {
       finished = true;
     } else {
       finished = false;
@@ -96,7 +96,7 @@ public class TakeoutBaiduRecognizer implements TakeoutRecognizer {
     }
 
     boolean finished;
-    if (matcher.group(1).equals("已送达")) {
+    if (matcher.group(1) != null && matcher.group(1).equals("已送达")) {
       finished = true;
     } else {
       finished = false;
